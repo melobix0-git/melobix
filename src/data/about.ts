@@ -15,7 +15,7 @@ export const aboutHero = {
    * to the gradient name card.
    */
   portrait: {
-    src: "/images/wonders.jpg",
+    src: "/images/wonders.jpeg",
     alt: "Portrait of Wonders (Obioma Obinna), founder of Melobix Studio, in a navy suit and light-blue shirt against a teal backdrop.",
   },
 } as const;
@@ -24,8 +24,8 @@ export const story = {
   eyebrow: "The story",
   title: "No single boxes",
   paragraphs: [
-    "I don't like being restricted to one box. I move between brand identity, UI/UX, web development, motion design, and product strategy — because the best digital products live at the intersection of all of them, not inside just one.",
-    "Based in Abia State, Nigeria, I came from a petroleum engineering background but chose to build instead — sharpening my fullstack craft through a coding camp while shipping real products in public as @Melobixy.",
+    "I don't like being restricted to one box. I move between brand identity, UI/UX, web/mobile development, motion design, and product strategy — because the best digital products live at the intersection of all of them, not inside just one.",
+    "I came from a petroleum engineering background and i love to build — shipping real products in public.",
   ],
 } as const;
 

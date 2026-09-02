@@ -25,6 +25,7 @@ export const projects: Project[] = [
     title: "Trova",
     category: "Mobile",
     tagline: "Offline-first personal content organizer.",
+    logo: "/logos/trova.png",
     description:
       "Capture, organize, and retrieve your content without a connection. Now being rebuilt as a native Flutter Android app, with a go-to-market strategy aimed at Nigerian universities.",
     status: "Shipped · rebuilding in Flutter",
@@ -34,6 +35,7 @@ export const projects: Project[] = [
     title: "Yimba",
     category: "E-commerce",
     tagline: "Free digital storefronts for Aba's traders and artisans.",
+    logo: "/logos/yimba.jpeg",
     description:
       "Two surfaces under one roof: Yimbuy for peer-to-peer trade and Yimba Bulk Buy for RFQ-based bulk sourcing. Currently pitching Abia State's governor for institutional support.",
     status: "Shipped · pitching Abia State",
@@ -43,6 +45,7 @@ export const projects: Project[] = [
     title: "Tickr",
     category: "Web",
     tagline: "A live board where your placements grow with attention.",
+    logo: "/logos/tickr.png",
     description:
       "Spots — image or link placements — compete on a shared global board, growing like bubbles driven by owner streaks and visitor traffic. Stripe-powered, so it's global from day one.",
     status: "Live · Stripe-powered",
@@ -61,6 +64,7 @@ export const projects: Project[] = [
     title: "Love Bomber",
     category: "Web",
     tagline: "Romantic messages, sent with flair.",
+    logo: "/logos/love-bomber.png",
     description:
       "A monetized web app for crafting and sending romantic messages. Small, fun, and proof that small products can still make money.",
     status: "Shipped",
