@@ -3,13 +3,13 @@ export const site = {
   studio: "Melobix Studio",
   person: {
     name: "Wonders",
-    legalName: "Obioma Obinna",
+    legalName: "Engr. Obioma Obinna",
     role: "Engineer, Multidisciplinary Creative-Technologist",
-    location: "Abia State, Nigeria → current digital timeline",
+    location: "Nigeria → current digital timeline",
   },
   shortName: "MB",
   tagline: "Engineer & Creative-Technologist",
-  email: "hello@melobix.com",
+  email: "melobix0@gmail.com",
   handle: "@Melobixy",
   social: {
     github: "https://github.com/melobix0-git",

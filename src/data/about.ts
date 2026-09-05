@@ -6,7 +6,7 @@
 export const aboutHero = {
   eyebrow: "Founder — Melobix Studio",
   title: "I'm Wonders.",
-  lead: "Engineer & multidisciplinary creative-technologist — UI/UX designer, brand designer, web developer, and product thinker, building digital experiences for African markets.",
+  lead: "Engineer & multidisciplinary creative-technologist — Petroluem Engineer, UI/UX designer, brand designer, web developer, and product thinker, building digital experiences for All.",
   second:
     "From brand identity to full-stack platforms, I turn ideas into things that actually exist.",
   /**
@@ -94,16 +94,6 @@ export const shipped = {
       name: "Yimba",
       detail:
         "A free digital storefront platform for Aba's traders and artisans, split into P2P trade and RFQ-based bulk sourcing. Currently pitching Abia State's governor for institutional support.",
-    },
-    {
-      name: "Donare",
-      detail:
-        "A transparent community treasury platform using Paystack virtual accounts, BVN verification, and WhatsApp-based organizing.",
-    },
-    {
-      name: "Gov. Alex Otti campaign site",
-      detail:
-        "A public campaign and achievements website for Abia State Governor Alex Otti, built for a tech-school demo day.",
     },
     {
       name: "Smaller shipped builds",
@@ -202,9 +192,9 @@ export const journey = [
     desc: "A petroleum engineering background first — systems thinking, high-pressure environments, and a habit of questioning every assumption.",
   },
   {
-    era: "The Switch",
+    era: "The Tech",
     title: "Chose to build",
-    desc: "Traded oil fields for a coding camp. Sharpened my fullstack craft and started shipping real products in public as @Melobixy.",
+    desc: "Applying tech to oil fields and other stuffs, then started shipping real products in public.",
   },
   {
     era: "The Studio",
@@ -214,7 +204,7 @@ export const journey = [
   {
     era: "Now",
     title: "Current digital timeline",
-    desc: "Shipping Trova, Yimba, and Donare — and running every serious idea through CTRIQUEST™ before it earns a line of code.",
+    desc: "Shipping Trova, Yimba, and Tickr — and running every serious idea through CTRIQUEST™ before it earns a line of code.",
   },
 ];
 
@@ -229,6 +219,6 @@ export const values = [
   },
   {
     title: "Build in public",
-    desc: "I share the process, the misses, and the milestones as @Melobixy. Accountability is a feature.",
+    desc: "I share the process, the misses, and the milestones. Accountability is a feature.",
   },
 ];
