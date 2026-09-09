@@ -55,6 +55,7 @@ export const projects: Project[] = [
     title: "Petro Prep",
     category: "Web",
     tagline: "Duolingo-style prep for petroleum engineering interviews.",
+    logo: "/logos/Petro-Prep.png",
     description:
       "A gamified quiz app that turns interview prep into daily streaks — the study companion I wish I'd had coming out of petroleum engineering.",
     status: "Shipped",
