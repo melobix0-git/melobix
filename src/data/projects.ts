@@ -71,4 +71,14 @@ export const projects: Project[] = [
     status: "Shipped",
     stack: ["Web app", "Monetized"],
   },
+  {
+    title: "Amore Essence",
+    category: "Web",
+    tagline: "With love in every drop.",
+    logo: "/logos/amore-essence.png",
+    description:
+      "A luxury e-commerce web app offering signature perfume oils, fragrances, mini scents, and curated gift collections designed around personal moods and scent rituals.",
+    status: "Shipped",
+    stack: ["Web app", "E-commerce", "Monetized"],
+  },
 ];
