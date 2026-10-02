@@ -75,7 +75,7 @@ export const projects: Project[] = [
     title: "Amore Essence",
     category: "Web",
     tagline: "With love in every drop.",
-    logo: "/logos/amore-essence.png",
+    logo: "/logos/amore-essence.jpg",
     description:
       "A luxury e-commerce web app offering signature perfume oils, fragrances, mini scents, and curated gift collections designed around personal moods and scent rituals.",
     status: "Shipped",
