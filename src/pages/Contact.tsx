@@ -4,6 +4,7 @@ import Magnetic from "@/components/Magnetic";
 import MatrixRain from "@/components/MatrixRain";
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
+import ScrollExit from "@/components/ScrollExit";
 import Typewriter from "@/components/Typewriter";
 import { contacts, responseTime, terminalCommand } from "@/data/contact";
 import { site } from "@/data/site";
@@ -157,7 +158,7 @@ export default function Contact() {
       <div className="relative z-10">
         {/* Hero */}
         <section className="min-h-[70vh] flex items-center pt-32 pb-12">
-          <div className="container">
+          <ScrollExit className="container" lift={-80} scaleTo={1} fade={1.3}>
             <div className="max-w-3xl animate-fadeUp">
               <p
                 className="text-xs tracking-widest uppercase mb-5 animate-glitch"
@@ -191,7 +192,7 @@ export default function Contact() {
                 work.
               </p>
             </div>
-          </div>
+          </ScrollExit>
         </section>
 
         {/* Contact */}
@@ -200,11 +201,15 @@ export default function Contact() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
               {/* Info */}
               <div>
-                <Reveal variant="left">
-                  <h2 className="text-3xl font-bold mb-8">Get In Touch</h2>
-                </Reveal>
+                <h2 className="text-3xl font-bold mb-8">
+                  <ScrambleText
+                    text="Get In Touch"
+                    charset="アイウエオカキクサシス01<>/#$%&*+"
+                    duration={800}
+                  />
+                </h2>
 
-                <Reveal variant="left" delay={120}>
+                <Reveal variant="clip-left" delay={120} duration={700}>
                   <div
                     className="flex items-center gap-2 mb-5 font-mono text-xs"
                     style={{ color: "var(--muted)" }}
@@ -222,10 +227,11 @@ export default function Contact() {
 
                 <div className="space-y-6">
                   {contacts.map((c, idx) => (
+                    // Each channel "comes online" with a stepped CRT scan + glitch
                     <Reveal
                       key={c.label}
-                      variant="left"
-                      delay={200 + idx * 100}
+                      variant="scan"
+                      delay={200 + idx * 140}
                     >
                       <a
                         href={c.href}
@@ -272,7 +278,7 @@ export default function Contact() {
                   ))}
                 </div>
 
-                <Reveal variant="left" delay={550}>
+                <Reveal variant="scan" delay={700}>
                   <div
                     className="mt-12 p-6 rounded-lg border-2"
                     style={{
@@ -294,11 +300,16 @@ export default function Contact() {
 
               {/* Form */}
               <div>
-                <Reveal variant="right">
-                  <h2 className="text-3xl font-bold mb-8">Send a Message</h2>
-                </Reveal>
+                <h2 className="text-3xl font-bold mb-8">
+                  <ScrambleText
+                    text="Send a Message"
+                    charset="アイウエオカキクサシス01<>/#$%&*+"
+                    delay={150}
+                    duration={900}
+                  />
+                </h2>
 
-                <Reveal variant="right" delay={120}>
+                <Reveal variant="clip-left" delay={250} duration={700}>
                   <div
                     className="flex items-center justify-between mb-6 px-4 py-3 rounded-lg border font-mono text-xs"
                     style={{
@@ -325,123 +336,122 @@ export default function Contact() {
                   </div>
                 </Reveal>
 
-                <Reveal variant="right" delay={200}>
-                  <form
-                    onSubmit={handleSubmit}
-                    noValidate
-                    className="space-y-6"
-                    aria-busy={status === "sending"}
-                  >
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-xs tracking-widest uppercase mb-2 font-mono"
-                        style={{ color: "var(--muted)" }}
+                <form
+                  onSubmit={handleSubmit}
+                  noValidate
+                  className="space-y-6"
+                  aria-busy={status === "sending"}
+                >
+                  {/* Fields "boot" in sequence like a terminal session */}
+                  <Reveal variant="scan" delay={350}>
+                    <label
+                      htmlFor="name"
+                      className="block text-xs tracking-widest uppercase mb-2 font-mono"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      &gt; Your Name
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      name="name"
+                      autoComplete="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      onFocus={() => setFocused("name")}
+                      onBlur={() => setFocused(null)}
+                      placeholder="Ada Okonkwo"
+                      required
+                      aria-invalid={Boolean(errors.name)}
+                      aria-describedby={errors.name ? "name-error" : undefined}
+                      className="w-full px-4 py-3 rounded-lg border-2 bg-transparent focus:outline-none"
+                      style={inputStyle("name")}
+                    />
+                    {errors.name && (
+                      <p
+                        id="name-error"
+                        className="mt-2 text-sm font-mono"
+                        style={{ color: "var(--accent3)" }}
                       >
-                        &gt; Your Name
-                      </label>
-                      <input
-                        id="name"
-                        type="text"
-                        name="name"
-                        autoComplete="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        onFocus={() => setFocused("name")}
-                        onBlur={() => setFocused(null)}
-                        placeholder="Ada Okonkwo"
-                        required
-                        aria-invalid={Boolean(errors.name)}
-                        aria-describedby={
-                          errors.name ? "name-error" : undefined
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 bg-transparent focus:outline-none"
-                        style={inputStyle("name")}
-                      />
-                      {errors.name && (
-                        <p
-                          id="name-error"
-                          className="mt-2 text-sm font-mono"
-                          style={{ color: "var(--accent3)" }}
-                        >
-                          ! {errors.name}
-                        </p>
-                      )}
-                    </div>
+                        ! {errors.name}
+                      </p>
+                    )}
+                  </Reveal>
 
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-xs tracking-widest uppercase mb-2 font-mono"
-                        style={{ color: "var(--muted)" }}
+                  <Reveal variant="scan" delay={480}>
+                    <label
+                      htmlFor="email"
+                      className="block text-xs tracking-widest uppercase mb-2 font-mono"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      &gt; Email Address
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      onFocus={() => setFocused("email")}
+                      onBlur={() => setFocused(null)}
+                      placeholder="ada@company.com"
+                      required
+                      aria-invalid={Boolean(errors.email)}
+                      aria-describedby={
+                        errors.email ? "email-error" : undefined
+                      }
+                      className="w-full px-4 py-3 rounded-lg border-2 bg-transparent focus:outline-none"
+                      style={inputStyle("email")}
+                    />
+                    {errors.email && (
+                      <p
+                        id="email-error"
+                        className="mt-2 text-sm font-mono"
+                        style={{ color: "var(--accent3)" }}
                       >
-                        &gt; Email Address
-                      </label>
-                      <input
-                        id="email"
-                        type="email"
-                        name="email"
-                        autoComplete="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        onFocus={() => setFocused("email")}
-                        onBlur={() => setFocused(null)}
-                        placeholder="ada@company.com"
-                        required
-                        aria-invalid={Boolean(errors.email)}
-                        aria-describedby={
-                          errors.email ? "email-error" : undefined
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 bg-transparent focus:outline-none"
-                        style={inputStyle("email")}
-                      />
-                      {errors.email && (
-                        <p
-                          id="email-error"
-                          className="mt-2 text-sm font-mono"
-                          style={{ color: "var(--accent3)" }}
-                        >
-                          ! {errors.email}
-                        </p>
-                      )}
-                    </div>
+                        ! {errors.email}
+                      </p>
+                    )}
+                  </Reveal>
 
-                    <div>
-                      <label
-                        htmlFor="message"
-                        className="block text-xs tracking-widest uppercase mb-2 font-mono"
-                        style={{ color: "var(--muted)" }}
+                  <Reveal variant="scan" delay={610}>
+                    <label
+                      htmlFor="message"
+                      className="block text-xs tracking-widest uppercase mb-2 font-mono"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      &gt; Message
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={form.message}
+                      onChange={handleChange}
+                      onFocus={() => setFocused("message")}
+                      onBlur={() => setFocused(null)}
+                      placeholder="> tell_me_about_your_idea"
+                      required
+                      rows={6}
+                      aria-invalid={Boolean(errors.message)}
+                      aria-describedby={
+                        errors.message ? "message-error" : undefined
+                      }
+                      className="w-full px-4 py-3 rounded-lg border-2 bg-transparent focus:outline-none resize-none"
+                      style={inputStyle("message")}
+                    />
+                    {errors.message && (
+                      <p
+                        id="message-error"
+                        className="mt-2 text-sm font-mono"
+                        style={{ color: "var(--accent3)" }}
                       >
-                        &gt; Message
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        value={form.message}
-                        onChange={handleChange}
-                        onFocus={() => setFocused("message")}
-                        onBlur={() => setFocused(null)}
-                        placeholder="> tell_me_about_your_idea"
-                        required
-                        rows={6}
-                        aria-invalid={Boolean(errors.message)}
-                        aria-describedby={
-                          errors.message ? "message-error" : undefined
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 bg-transparent focus:outline-none resize-none"
-                        style={inputStyle("message")}
-                      />
-                      {errors.message && (
-                        <p
-                          id="message-error"
-                          className="mt-2 text-sm font-mono"
-                          style={{ color: "var(--accent3)" }}
-                        >
-                          ! {errors.message}
-                        </p>
-                      )}
-                    </div>
+                        ! {errors.message}
+                      </p>
+                    )}
+                  </Reveal>
 
+                  <Reveal variant="pop" delay={760}>
                     <Magnetic className="w-full" strength={0.12}>
                       <button
                         type="submit"
@@ -460,20 +470,20 @@ export default function Contact() {
                         {buttonLabel}
                       </button>
                     </Magnetic>
+                  </Reveal>
 
-                    <p
-                      className="text-xs font-mono"
-                      style={{ color: "var(--muted)" }}
-                      aria-live="polite"
-                    >
-                      {status === "sent"
-                        ? "// transmission received. I'll get back to you shortly."
-                        : FORM_ENDPOINT
-                          ? "// your message goes straight to my inbox."
-                          : "// this opens your email client with the message pre-filled."}
-                    </p>
-                  </form>
-                </Reveal>
+                  <p
+                    className="text-xs font-mono"
+                    style={{ color: "var(--muted)" }}
+                    aria-live="polite"
+                  >
+                    {status === "sent"
+                      ? "// transmission received. I'll get back to you shortly."
+                      : FORM_ENDPOINT
+                        ? "// your message goes straight to my inbox."
+                        : "// this opens your email client with the message pre-filled."}
+                  </p>
+                </form>
               </div>
             </div>
           </div>
@@ -485,15 +495,17 @@ export default function Contact() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="container text-center">
-            <Reveal variant="blur">
-              <h2
-                className="text-4xl font-extrabold mb-6 animate-neon-glow"
-                style={{ color: "var(--accent1)" }}
-              >
-                Let&apos;s Build Something Amazing
-              </h2>
-            </Reveal>
-            <Reveal delay={150}>
+            <h2
+              className="text-4xl font-extrabold mb-6 animate-neon-glow"
+              style={{ color: "var(--accent1)" }}
+            >
+              <ScrambleText
+                text="Let's Build Something Amazing"
+                charset="アイウエオカキクサシス01<>/#$%&*+"
+                duration={1200}
+              />
+            </h2>
+            <Reveal variant="scan" delay={400}>
               <p
                 className="text-lg mb-8 max-w-2xl mx-auto"
                 style={{ color: "var(--muted)" }}

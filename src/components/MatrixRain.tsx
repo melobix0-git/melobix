@@ -7,6 +7,12 @@ interface MatrixRainProps {
   /** CSS opacity of the whole canvas (kept subtle so copy stays readable). */
   opacity?: number;
   className?: string;
+  /**
+   * Fill the parent box instead of the viewport (parent must be positioned).
+   * Colors come from the nearest themed ancestor, and the loop pauses while
+   * the box is off-screen.
+   */
+  contained?: boolean;
 }
 
 /**
@@ -20,6 +26,7 @@ interface MatrixRainProps {
 export default function MatrixRain({
   opacity = 0.5,
   className = "",
+  contained = false,
 }: MatrixRainProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -32,14 +39,16 @@ export default function MatrixRain({
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    const css = getComputedStyle(document.documentElement);
+    const css = getComputedStyle(contained ? canvas : document.documentElement);
     const mainColor = css.getPropertyValue("--accent1").trim() || "#00ff41";
     const dimColor = css.getPropertyValue("--accent4").trim() || "#0c8a3e";
     const headColor = `color-mix(in srgb, ${mainColor} 40%, white)`;
     const bgColor = css.getPropertyValue("--bg").trim() || "#020803";
 
     let raf = 0;
-    let visible = !document.hidden;
+    let tabVisible = !document.hidden;
+    let onScreen = true;
+    let visible = tabVisible;
     let w = 0;
     let h = 0;
     let fontSize = 16;
@@ -53,8 +62,9 @@ export default function MatrixRain({
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = window.innerWidth;
-      h = window.innerHeight;
+      const box = contained ? canvas.parentElement : null;
+      w = box ? box.clientWidth : window.innerWidth;
+      h = box ? box.clientHeight : window.innerHeight;
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       canvas.style.width = `${w}px`;
@@ -124,8 +134,21 @@ export default function MatrixRain({
     };
 
     const onVisibility = () => {
-      visible = !document.hidden;
+      tabVisible = !document.hidden;
+      visible = tabVisible && onScreen;
     };
+
+    let ro: ResizeObserver | undefined;
+    let io: IntersectionObserver | undefined;
+    if (contained && canvas.parentElement) {
+      ro = new ResizeObserver(() => resize());
+      ro.observe(canvas.parentElement);
+      io = new IntersectionObserver(([entry]) => {
+        onScreen = entry.isIntersecting;
+        visible = tabVisible && onScreen;
+      });
+      io.observe(canvas.parentElement);
+    }
 
     resize();
     if (reduced) {
@@ -138,15 +161,17 @@ export default function MatrixRain({
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       cancelAnimationFrame(raf);
+      ro?.disconnect();
+      io?.disconnect();
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [contained]);
 
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 z-0 pointer-events-none ${className}`}
+      className={`${contained ? "absolute" : "fixed z-0"} inset-0 pointer-events-none ${className}`}
       style={{ opacity }}
       aria-hidden="true"
     />

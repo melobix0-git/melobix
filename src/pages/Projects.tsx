@@ -3,7 +3,9 @@ import { Link } from "wouter";
 import Magnetic from "@/components/Magnetic";
 import Marquee from "@/components/Marquee";
 import Reveal from "@/components/Reveal";
-import ScrambleText from "@/components/ScrambleText";
+import ScrollExit from "@/components/ScrollExit";
+import ScrollTrack from "@/components/ScrollTrack";
+import SplitText from "@/components/SplitText";
 import Tilt from "@/components/Tilt";
 import { projects, type Project } from "@/data/projects";
 import { site } from "@/data/site";
@@ -62,29 +64,44 @@ export default function Projects() {
     <>
       {/* Hero */}
       <section className="min-h-[70vh] flex items-end pt-40 pb-16">
-        <div className="container">
-          <div className="max-w-3xl animate-fadeUp">
-            <p
-              className="text-xs tracking-widest uppercase mb-6"
-              style={{ color: "var(--muted)" }}
-            >
-              {String(projects.length).padStart(2, "0")} shipped &amp; active —
-              built in public
-            </p>
-            <h1 className="text-6xl sm:text-7xl lg:text-8xl font-extrabold mb-6 leading-[0.95] tracking-tight">
-              <ScrambleText
-                text="Shipped & Active"
-                as="span"
-                delay={150}
-                duration={1300}
-              />
-            </h1>
-            <p className="text-xl" style={{ color: "var(--muted)" }}>
-              Real products, in the wild — from Aba&apos;s markets to a global
-              engagement board. The work is live; the logos are landing.
-            </p>
+        {/* Editorial hero: letters rise off a baseline, then the whole block
+            recedes (shrinks + fades) as the grid scrolls up over it. */}
+        <ScrollExit
+          className="container origin-bottom-left"
+          lift={-40}
+          scaleTo={0.88}
+        >
+          <div className="max-w-3xl">
+            <Reveal variant="left" duration={800}>
+              <p
+                className="flex items-center gap-3 text-xs tracking-widest uppercase mb-6"
+                style={{ color: "var(--muted)" }}
+              >
+                <span
+                  className="rule-draw inline-block h-px w-12"
+                  style={{ background: "currentColor" }}
+                  aria-hidden="true"
+                />
+                {String(projects.length).padStart(2, "0")} shipped &amp; active
+                — built in public
+              </p>
+            </Reveal>
+            <SplitText
+              as="h1"
+              text="Shipped & Active"
+              by="chars"
+              stagger={35}
+              delay={150}
+              className="text-6xl sm:text-7xl lg:text-8xl font-extrabold mb-6 leading-[0.95] tracking-tight"
+            />
+            <Reveal variant="blur" delay={650}>
+              <p className="text-xl" style={{ color: "var(--muted)" }}>
+                Real products, in the wild — from Aba&apos;s markets to a global
+                engagement board. The work is live; the logos are landing.
+              </p>
+            </Reveal>
           </div>
-        </div>
+        </ScrollExit>
       </section>
 
       {/* Name ticker */}
@@ -92,7 +109,7 @@ export default function Projects() {
         className="border-b py-5"
         style={{ borderColor: "var(--border)" }}
       >
-        <Marquee speed={32}>
+        <Marquee speed={32} reactive>
           {projects.map(p => (
             <span
               key={p.title}
@@ -119,32 +136,34 @@ export default function Projects() {
 
       {/* Filter */}
       <section>
-        <div
-          className="container py-4 flex flex-wrap gap-2"
-          role="tablist"
-          aria-label="Filter projects"
-        >
-          {categories.map(c => {
-            const active = c === filter;
-            return (
-              <button
-                key={c}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setFilter(c)}
-                className="px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-colors"
-                style={{
-                  background: active ? "var(--accent1)" : "transparent",
-                  color: active ? "var(--bg)" : "var(--text)",
-                  borderColor: active ? "var(--accent1)" : "var(--border)",
-                }}
-              >
-                {c}
-              </button>
-            );
-          })}
-        </div>
+        <Reveal variant="up" duration={700}>
+          <div
+            className="container py-4 flex flex-wrap gap-2"
+            role="tablist"
+            aria-label="Filter projects"
+          >
+            {categories.map(c => {
+              const active = c === filter;
+              return (
+                <button
+                  key={c}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setFilter(c)}
+                  className="px-4 py-2 text-xs uppercase tracking-widest rounded-full border transition-colors"
+                  style={{
+                    background: active ? "var(--accent1)" : "transparent",
+                    color: active ? "var(--bg)" : "var(--text)",
+                    borderColor: active ? "var(--accent1)" : "var(--border)",
+                  }}
+                >
+                  {c}
+                </button>
+              );
+            })}
+          </div>
+        </Reveal>
       </section>
 
       {/* Grid */}
@@ -152,9 +171,12 @@ export default function Projects() {
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {visible.map((project, idx) => (
+              // Curtain wipes alternate direction by column; keyed on the
+              // filter so switching categories replays the wipe.
               <Reveal
-                key={project.title}
-                delay={(idx % 2) * 100}
+                key={`${filter}-${project.title}`}
+                variant={idx % 2 === 0 ? "clip-left" : "clip-right"}
+                delay={(idx % 2) * 140}
                 className="h-full"
               >
                 <Tilt
@@ -248,17 +270,47 @@ export default function Projects() {
         </div>
       </section>
 
+      {/* Oversized type bands, locked to scroll and moving in opposite
+          directions — the editorial "credits roll" between grid and CTA. */}
+      <section
+        className="py-16 border-t overflow-hidden select-none"
+        style={{ borderColor: "var(--border)" }}
+        aria-hidden="true"
+      >
+        <ScrollTrack distance={-30} className="mb-4">
+          {[0, 1, 2].map(n => (
+            <span
+              key={n}
+              className="font-display text-7xl md:text-9xl font-extrabold uppercase tracking-tight"
+            >
+              Shipped <span className="text-outline">— Active —</span>
+            </span>
+          ))}
+        </ScrollTrack>
+        <ScrollTrack distance={30} style={{ marginLeft: "-60%" }}>
+          {[0, 1, 2].map(n => (
+            <span
+              key={n}
+              className="font-display text-7xl md:text-9xl font-extrabold uppercase tracking-tight"
+            >
+              <span className="text-outline">Built in</span> Public —
+            </span>
+          ))}
+        </ScrollTrack>
+      </section>
+
       {/* CTA */}
       <section
         className="py-20 border-t"
         style={{ borderColor: "var(--border)" }}
       >
         <div className="container text-center">
-          <Reveal variant="blur">
-            <h2 className="text-4xl font-extrabold mb-6">
-              Have a project in mind?
-            </h2>
-          </Reveal>
+          <SplitText
+            as="h2"
+            text="Have a project in mind?"
+            stagger={80}
+            className="block text-4xl font-extrabold mb-6"
+          />
           <Reveal delay={150}>
             <p
               className="text-lg mb-8 max-w-2xl mx-auto"
@@ -268,7 +320,7 @@ export default function Projects() {
               honestly whether it can work.
             </p>
           </Reveal>
-          <Reveal delay={300}>
+          <Reveal variant="clip-up" delay={300}>
             <Magnetic>
               <Link
                 href="/contact"

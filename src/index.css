@@ -11,11 +11,14 @@
    Per-page themes
    Each route sets `data-theme` on <html> (see src/lib/themes.ts). Everything
    in the UI is painted with these variables so a page can switch its whole
-   look without touching component code.
+   look without touching component code. The same attribute also works on
+   any element, which scopes that theme to a subtree — the "next page"
+   portal uses this to preview the next page's look inside the current one.
    ------------------------------------------------------------------------- */
 
 :root,
-:root[data-theme="dark-neon"] {
+:root[data-theme="dark-neon"],
+[data-theme="dark-neon"] {
   --bg: #0a0a0f;
   --card: #111118;
   --accent1: #ff3cac;
@@ -30,7 +33,8 @@
   color-scheme: dark;
 }
 
-:root[data-theme="monochrome"] {
+:root[data-theme="monochrome"],
+[data-theme="monochrome"] {
   --bg: #ffffff;
   --card: #f5f5f5;
   --accent1: #000000;
@@ -45,7 +49,8 @@
   color-scheme: light;
 }
 
-:root[data-theme="earthy"] {
+:root[data-theme="earthy"],
+[data-theme="earthy"] {
   --bg: #faf8f3;
   --card: #f5f1e8;
   --accent1: #c85a3a;
@@ -60,7 +65,8 @@
   color-scheme: light;
 }
 
-:root[data-theme="glass"] {
+:root[data-theme="glass"],
+[data-theme="glass"] {
   --bg: #f0f4f8;
   --card: rgba(255, 255, 255, 0.7);
   --accent1: #6b9bd1;
@@ -75,7 +81,8 @@
   color-scheme: light;
 }
 
-:root[data-theme="cyberpunk"] {
+:root[data-theme="cyberpunk"],
+[data-theme="cyberpunk"] {
   --bg: #0d0221;
   --card: #1a0033;
   --accent1: #ff006e;
@@ -90,7 +97,8 @@
   color-scheme: dark;
 }
 
-:root[data-theme="matrix"] {
+:root[data-theme="matrix"],
+[data-theme="matrix"] {
   --bg: #020803;
   --card: #06130a;
   --accent1: #00ff41;
@@ -404,6 +412,41 @@
   }
 }
 
+@keyframes glitchIn {
+  0% {
+    transform: translateX(-6px);
+    filter: hue-rotate(80deg) brightness(1.6);
+  }
+  25% {
+    transform: translateX(4px);
+  }
+  50% {
+    transform: translateX(-2px);
+    filter: none;
+  }
+  75% {
+    transform: translateX(1px);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes cueWheel {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
 @layer components {
   /* Infinite marquee. Children render twice for a seamless loop. */
   .marquee {
@@ -441,13 +484,19 @@
     padding-right: 3rem;
   }
 
-  /* Scroll-triggered reveals. Toggle .is-visible via useInView. */
+  /* Scroll-triggered reveals. Toggle .is-visible via useInView.
+     Each variant only declares its hidden state; .is-visible resets to
+     the natural state and .is-done strips the leftovers (clip/filter). */
   .reveal {
+    --reveal-dur: 900ms;
+    --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
     opacity: 0;
     transition:
-      opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-      filter 0.9s ease;
+      opacity var(--reveal-dur) var(--reveal-ease),
+      transform var(--reveal-dur) var(--reveal-ease),
+      filter var(--reveal-dur) ease,
+      clip-path var(--reveal-dur) var(--reveal-ease);
+    will-change: opacity, transform;
   }
 
   .reveal-up {
@@ -471,10 +520,283 @@
     transform: translateY(18px);
   }
 
+  .reveal-rise {
+    --reveal-dur: 1200ms;
+    --reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(90px);
+  }
+
+  .reveal-flip {
+    --reveal-dur: 1000ms;
+    transform: perspective(1000px) rotateX(-28deg) translateY(40px);
+    transform-origin: 50% 0%;
+  }
+
+  .reveal-pop {
+    --reveal-dur: 700ms;
+    --reveal-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0.55);
+  }
+
+  .reveal-zoom {
+    --reveal-dur: 1100ms;
+    transform: scale(1.1);
+    filter: blur(14px);
+  }
+
+  .reveal-clip-up {
+    --reveal-dur: 1100ms;
+    --reveal-ease: cubic-bezier(0.77, 0, 0.18, 1);
+    opacity: 1;
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(40px);
+  }
+
+  .reveal-clip-left {
+    --reveal-dur: 1100ms;
+    --reveal-ease: cubic-bezier(0.77, 0, 0.18, 1);
+    opacity: 1;
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .reveal-clip-right {
+    --reveal-dur: 1100ms;
+    --reveal-ease: cubic-bezier(0.77, 0, 0.18, 1);
+    opacity: 1;
+    clip-path: inset(0 0 0 100%);
+  }
+
+  .reveal-clip-up,
+  .reveal-clip-left,
+  .reveal-clip-right {
+    /* Hidden content shouldn't be focusable-looking while clipped away. */
+    visibility: hidden;
+  }
+
+  .reveal-clip-up.is-visible,
+  .reveal-clip-left.is-visible,
+  .reveal-clip-right.is-visible {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .reveal-tilt-left {
+    transform: translateX(-70px) rotate(-5deg);
+    transform-origin: 100% 100%;
+  }
+
+  .reveal-tilt-right {
+    transform: translateX(70px) rotate(5deg);
+    transform-origin: 0% 100%;
+  }
+
+  .reveal-scan {
+    --reveal-dur: 650ms;
+    --reveal-ease: steps(9, end);
+    opacity: 1;
+    visibility: hidden;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  .reveal-scan.is-visible {
+    visibility: visible;
+    clip-path: inset(0 0 0 0);
+    animation: glitchIn 0.6s steps(2, end) both;
+  }
+
   .reveal.is-visible {
     opacity: 1;
     transform: none;
     filter: none;
+  }
+
+  .reveal.is-done {
+    clip-path: none;
+    will-change: auto;
+  }
+
+  /* Split-text (SplitText.tsx). Words never break mid-word. */
+  .split-word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .split-mask {
+    display: inline-block;
+    vertical-align: top;
+    overflow: hidden;
+    /* room for descenders/accents so the mask doesn't clip glyphs */
+    padding-block: 0.1em;
+    margin-block: -0.1em;
+  }
+
+  .split-piece {
+    display: inline-block;
+    transform: translateY(115%);
+    transition:
+      transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.95s ease;
+    will-change: transform;
+  }
+
+  .split-blur .split-mask {
+    overflow: visible;
+  }
+
+  .split-blur .split-piece {
+    transform: translateY(0.25em);
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  .split-flip .split-mask {
+    overflow: visible;
+    perspective: 600px;
+  }
+
+  .split-flip .split-piece {
+    transform: rotateX(-90deg);
+    transform-origin: 50% 100%;
+    opacity: 0;
+  }
+
+  .split.is-visible .split-piece {
+    transform: none;
+    opacity: 1;
+    filter: none;
+  }
+
+  /* Scroll-scrubbed reading highlight (ScrubText.tsx). Each word lights up
+     from its index once --p (0→1) passes it. Pure CSS per frame. */
+  .scrub-word {
+    --lit: clamp(0, calc(var(--p, 0) * (var(--n) + 3) - var(--i)), 1);
+    opacity: calc(var(--dim) + (1 - var(--dim)) * var(--lit));
+    transition: opacity 0.12s linear;
+  }
+
+  .scrub-mark {
+    color: color-mix(
+      in srgb,
+      var(--mark) calc(var(--lit) * 100%),
+      currentColor
+    );
+  }
+
+  /* Scroll timeline spine (ScrollTimeline.tsx). */
+  .timeline-rail {
+    position: absolute;
+    left: 0.6rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  @media (min-width: 768px) {
+    .timeline-rail {
+      left: 1.1rem;
+    }
+  }
+
+  .timeline-fill {
+    position: absolute;
+    inset: 0;
+    transform-origin: top;
+    transform: scaleY(var(--p, 0));
+    background: linear-gradient(var(--accent1), var(--accent3));
+    border-radius: inherit;
+  }
+
+  .timeline-head {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--p, 0) * 100%);
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    border-radius: 999px;
+    background: var(--accent1);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent1) 22%, transparent);
+    opacity: calc(min(1, var(--p, 0) * 20));
+  }
+
+  /* Marker for each timeline entry; centred on the rail (rail centre is
+     0.6rem / 1.1rem + 1px from the timeline's left edge, entries start at
+     2.5rem / 3.5rem). Lights up when its parent .reveal becomes visible. */
+  .timeline-dot {
+    position: absolute;
+    left: calc(0.6rem + 1px - 7px - 2.5rem);
+    top: 0.45rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    transform: scale(0.6);
+    transition:
+      transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s,
+      border-color 0.4s ease 0.25s,
+      background 0.4s ease 0.25s,
+      box-shadow 0.4s ease 0.25s;
+  }
+
+  @media (min-width: 768px) {
+    .timeline-dot {
+      left: calc(1.1rem + 1px - 7px - 3.5rem);
+    }
+  }
+
+  .is-visible .timeline-dot {
+    border-color: var(--accent1);
+    background: var(--accent1);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent1) 18%, transparent);
+    transform: scale(1);
+  }
+
+  /* Scroll cue (ScrollCue.tsx). */
+  .scroll-cue-mouse {
+    position: relative;
+    width: 22px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1.5px solid currentColor;
+  }
+
+  .scroll-cue-wheel {
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    width: 3px;
+    height: 7px;
+    margin-left: -1.5px;
+    border-radius: 3px;
+    background: var(--accent2);
+    animation: cueWheel 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  /* Velocity marquee skew wrapper. */
+  .marquee-skew {
+    will-change: transform;
+  }
+
+  /* Outlined display type for scroll bands. */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px currentColor;
+  }
+
+  /* Underline that draws itself when its parent reveal becomes visible. */
+  .rule-draw {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.18, 1) 0.15s;
+  }
+
+  .is-visible .rule-draw,
+  .rule-draw.is-visible {
+    transform: scaleX(1);
   }
 
   /* Animated conic-gradient border (pair with .animate-border-flow). */
@@ -512,6 +834,159 @@
   .link-draw:hover,
   .link-draw:focus-visible {
     background-size: 100% 1.5px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Next-page portal (NextPage.tsx) + page transition (lib/pageTransition.ts)
+   ------------------------------------------------------------------------- */
+
+@layer components {
+  /* CTA pill: light sweep, arrow swings from ↗ to → and the pill opens up. */
+  .next-cta {
+    transition: gap 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .group:hover .next-cta,
+  .group:focus-visible .next-cta,
+  a:focus-visible .next-cta {
+    gap: 1.6rem;
+  }
+
+  .next-cta-fill {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateX(-101%);
+    transition: transform 0.55s cubic-bezier(0.77, 0, 0.18, 1);
+  }
+
+  .group:hover .next-cta-fill,
+  a:focus-visible .next-cta-fill {
+    transform: translateX(0);
+  }
+
+  .next-cta-arrow {
+    transform: rotate(-45deg);
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .group:hover .next-cta-arrow,
+  a:focus-visible .next-cta-arrow {
+    transform: rotate(0deg) scale(1.08);
+  }
+
+  /* Projects: deck of logo tiles — stacked, then fanned out on hover. */
+  .fan-tile {
+    transform: translate(0, 40px) scale(0.9);
+    opacity: 0;
+    transition:
+      transform 0.8s cubic-bezier(0.34, 1.3, 0.64, 1),
+      opacity 0.6s ease;
+    transition-delay: calc(var(--i) * 80ms);
+  }
+
+  .next-portal.is-visible .fan-tile {
+    opacity: 1;
+    transform: translate(calc(var(--i) * 12px), calc(var(--i) * -12px))
+      rotate(calc(var(--i) * -4deg));
+  }
+
+  .next-portal.is-visible .group:hover .fan-tile {
+    transition-delay: calc(var(--i) * 40ms);
+    transform: translate(
+        calc((var(--i) - (var(--n) - 1) / 2) * 74px),
+        calc(var(--i) * 6px - 10px)
+      )
+      rotate(calc((var(--i) - (var(--n) - 1) / 2) * 9deg));
+  }
+
+  /* Services: frosted chips drift apart on hover. */
+  .glass-chip {
+    opacity: 0;
+    transform: scale(0.8);
+    transition:
+      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.8s ease;
+  }
+
+  .next-portal.is-visible .glass-chip {
+    opacity: 1;
+    transform: none;
+  }
+
+  .next-portal.is-visible .group:hover .glass-chip {
+    transform: translate(var(--dx), var(--dy));
+  }
+
+  /* About: hand-drawn underline that draws itself in. */
+  .squiggle path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.6s;
+  }
+
+  .next-portal.is-visible .squiggle path {
+    stroke-dashoffset: 0;
+  }
+
+  /* Contact: CRT scanlines. */
+  .crt-scanlines {
+    pointer-events: none;
+    opacity: 0.35;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.45) 0 1px,
+      transparent 1px 3px
+    );
+  }
+
+  /* Full-screen themed wipe between pages. */
+  .page-portal {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        circle at var(--x) var(--y),
+        color-mix(in srgb, var(--accent1) 28%, transparent),
+        transparent 55%
+      ),
+      var(--bg);
+    clip-path: circle(0px at var(--x) var(--y));
+    transition:
+      clip-path 0.65s cubic-bezier(0.76, 0, 0.24, 1),
+      opacity 0.42s ease;
+  }
+
+  .page-portal.is-open {
+    clip-path: circle(150vmax at var(--x) var(--y));
+  }
+
+  .page-portal.is-leaving {
+    opacity: 0;
+  }
+
+  .page-portal-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(3rem, 12vw, 9rem);
+    letter-spacing: -0.02em;
+    color: var(--accent1);
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+    transition:
+      opacity 0.5s ease 0.25s,
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s;
+  }
+
+  .page-portal.is-open .page-portal-title {
+    opacity: 1;
+    transform: none;
   }
 }
 

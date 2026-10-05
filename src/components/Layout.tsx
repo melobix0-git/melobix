@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { useLocation } from "wouter";
 import Footer from "./Footer";
 import Navigation from "./Navigation";
+import NextPage from "./NextPage";
 import ScrollProgress from "./ScrollProgress";
 
 interface LayoutProps {
@@ -12,6 +13,7 @@ interface LayoutProps {
  * Shared page chrome. Every page renders inside this so the nav and footer
  * are only mounted once and don't flash between route changes. The keyed
  * wrapper gives each route a short fade/slide entrance (animate-pageIn).
+ * Every page ends with the themed NextPage portal to the following page.
  */
 export default function Layout({ children }: LayoutProps) {
   const [location] = useLocation();
@@ -26,6 +28,7 @@ export default function Layout({ children }: LayoutProps) {
       <main className="flex-1 relative z-10">
         <div key={location} className="animate-pageIn">
           {children}
+          <NextPage />
         </div>
       </main>
       <Footer />

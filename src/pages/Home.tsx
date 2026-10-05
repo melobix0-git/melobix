@@ -3,8 +3,12 @@ import { Link } from "wouter";
 import Counter from "@/components/Counter";
 import Magnetic from "@/components/Magnetic";
 import Marquee from "@/components/Marquee";
+import Parallax from "@/components/Parallax";
 import Reveal from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
+import ScrollCue from "@/components/ScrollCue";
+import ScrollExit from "@/components/ScrollExit";
+import ScrubText from "@/components/ScrubText";
 import SectionHeading from "@/components/SectionHeading";
 import Tilt from "@/components/Tilt";
 import { hero, stats, whatIDo } from "@/data/home";
@@ -42,32 +46,42 @@ export default function Home() {
         className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        <div
-          className="absolute w-96 h-96 rounded-full blur-3xl opacity-20 animate-drift"
-          style={{
-            background: "var(--accent4)",
-            top: "-200px",
-            left: "-150px",
-          }}
-        />
-        <div
-          className="absolute w-80 h-80 rounded-full blur-3xl opacity-20 animate-drift"
-          style={{
-            background: "var(--accent1)",
-            bottom: "-150px",
-            right: "-100px",
-            animationDelay: "-4s",
-          }}
-        />
-        <div
-          className="absolute w-64 h-64 rounded-full blur-3xl opacity-20 animate-drift"
-          style={{
-            background: "var(--accent2)",
-            top: "40%",
-            left: "40%",
-            animationDelay: "-8s",
-          }}
-        />
+        {/* Each blob sits on its own depth plane: they drift apart at
+            different rates as you scroll, giving the mesh real parallax. */}
+        <Parallax
+          mode="page"
+          offset={0.12}
+          className="absolute"
+          style={{ top: "-200px", left: "-150px" }}
+        >
+          <div
+            className="w-96 h-96 rounded-full blur-3xl opacity-20 animate-drift"
+            style={{ background: "var(--accent4)" }}
+          />
+        </Parallax>
+        <Parallax
+          mode="page"
+          offset={-0.18}
+          className="absolute"
+          style={{ bottom: "-150px", right: "-100px" }}
+        >
+          <div
+            className="w-80 h-80 rounded-full blur-3xl opacity-20 animate-drift"
+            style={{ background: "var(--accent1)", animationDelay: "-4s" }}
+          />
+        </Parallax>
+        <Parallax
+          mode="page"
+          offset={-0.08}
+          x={0.04}
+          className="absolute"
+          style={{ top: "40%", left: "40%" }}
+        >
+          <div
+            className="w-64 h-64 rounded-full blur-3xl opacity-20 animate-drift"
+            style={{ background: "var(--accent2)", animationDelay: "-8s" }}
+          />
+        </Parallax>
       </div>
 
       {/* Noise overlay */}
@@ -97,8 +111,8 @@ export default function Home() {
 
       <div className="relative z-10">
         {/* Hero */}
-        <section className="min-h-screen flex items-center pt-32 pb-20">
-          <div className="container">
+        <section className="min-h-screen flex items-center pt-32 pb-20 relative">
+          <ScrollExit className="container" lift={-120} scaleTo={0.94} blur={4}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fadeUp">
                 <div
@@ -198,9 +212,13 @@ export default function Home() {
                 </dl>
               </div>
 
-              {/* Visual */}
+              {/* Visual — rushes ahead of the copy and spins a little on scroll */}
               <div className="hidden lg:flex items-center justify-center animate-fadeUp delay-2">
-                <div className="relative w-80 h-80">
+                <Parallax
+                  offset={-260}
+                  rotate={24}
+                  className="relative w-80 h-80"
+                >
                   <div
                     className="absolute inset-0 animate-morphBlob"
                     style={{
@@ -239,10 +257,11 @@ export default function Home() {
                   >
                     Design → Code
                   </span>
-                </div>
+                </Parallax>
               </div>
             </div>
-          </div>
+          </ScrollExit>
+          <ScrollCue className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden sm:flex" />
         </section>
 
         {/* What I do — infinite marquee strip */}
@@ -250,7 +269,7 @@ export default function Home() {
           className="py-6 border-y overflow-hidden"
           style={{ borderColor: "var(--border)" }}
         >
-          <Marquee speed={26}>
+          <Marquee speed={26} reactive>
             <span
               className="text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border font-semibold whitespace-nowrap"
               style={{ color: "var(--accent2)", borderColor: "var(--accent2)" }}
@@ -283,9 +302,11 @@ export default function Home() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="container">
-            <Reveal>
-              <SectionHeading eyebrow="// capabilities" title="My Services" />
-            </Reveal>
+            <SectionHeading
+              eyebrow="// capabilities"
+              title="My Services"
+              effect="flip"
+            />
 
             <div
               className="grid grid-cols-1 md:grid-cols-3 gap-px p-px rounded-2xl overflow-hidden"
@@ -294,7 +315,8 @@ export default function Home() {
               {highlights.map((service, idx) => (
                 <Reveal
                   key={service.title}
-                  delay={idx * 100}
+                  variant="flip"
+                  delay={idx * 140}
                   className="h-full"
                 >
                   <Tilt
@@ -318,7 +340,7 @@ export default function Home() {
             </div>
 
             <div className="mt-8">
-              <Reveal>
+              <Reveal variant="left">
                 <Link
                   href="/services"
                   className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest group"
@@ -340,63 +362,69 @@ export default function Home() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="container">
-            <Reveal>
-              <SectionHeading
-                eyebrow="// selected work"
-                title="Shipped & Active"
-              />
-            </Reveal>
+            <SectionHeading
+              eyebrow="// selected work"
+              title="Shipped & Active"
+              highlight={["Active"]}
+              effect="blur"
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {featured.map((project, idx) => (
-                <Reveal
+                // Columns float at slightly different speeds (middle one
+                // lags) for a staggered, layered grid while scrolling.
+                <Parallax
                   key={project.title}
-                  delay={idx * 100}
+                  offset={idx === 1 ? 70 : -30}
                   className="h-full"
                 >
-                  <Tilt
-                    maxTilt={6}
-                    shimmer
-                    className="h-full p-6 rounded-2xl border"
-                    style={{
-                      background: "var(--card)",
-                      borderColor: "var(--border)",
-                    }}
-                  >
-                    <p
-                      className="text-xs tracking-widest uppercase mb-3"
-                      style={{ color: "var(--accent2)" }}
+                  <Reveal variant="rise" delay={idx * 120} className="h-full">
+                    <Tilt
+                      maxTilt={6}
+                      shimmer
+                      className="h-full p-6 rounded-2xl border"
+                      style={{
+                        background: "var(--card)",
+                        borderColor: "var(--border)",
+                      }}
                     >
-                      {project.category}
-                    </p>
-                    <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-                    <p
-                      className="text-sm mb-6"
-                      style={{ color: "var(--muted)" }}
-                    >
-                      {project.tagline}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {project.stack.map(t => (
-                        <span
-                          key={t}
-                          className="text-xs px-2 py-1 rounded-md"
-                          style={{
-                            border: "1px solid var(--border)",
-                            color: "var(--muted)",
-                          }}
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </Tilt>
-                </Reveal>
+                      <p
+                        className="text-xs tracking-widest uppercase mb-3"
+                        style={{ color: "var(--accent2)" }}
+                      >
+                        {project.category}
+                      </p>
+                      <h3 className="text-xl font-bold mb-3">
+                        {project.title}
+                      </h3>
+                      <p
+                        className="text-sm mb-6"
+                        style={{ color: "var(--muted)" }}
+                      >
+                        {project.tagline}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {project.stack.map(t => (
+                          <span
+                            key={t}
+                            className="text-xs px-2 py-1 rounded-md"
+                            style={{
+                              border: "1px solid var(--border)",
+                              color: "var(--muted)",
+                            }}
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </Tilt>
+                  </Reveal>
+                </Parallax>
               ))}
             </div>
 
             <div className="mt-8">
-              <Reveal>
+              <Reveal variant="left">
                 <Link
                   href="/projects"
                   className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest group"
@@ -418,12 +446,16 @@ export default function Home() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="container text-center">
-            <Reveal variant="blur">
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-                Let&apos;s build something{" "}
-                <span style={{ color: "var(--accent1)" }}>remarkable</span>.
-              </h2>
-            </Reveal>
+            {/* Words light up neon one by one as the CTA scrolls into place */}
+            <ScrubText
+              as="h2"
+              text="Let's build something remarkable."
+              highlight={["remarkable"]}
+              className="text-4xl lg:text-6xl font-bold mb-6 max-w-3xl mx-auto"
+              dim={0.12}
+              start={0.95}
+              end={0.55}
+            />
             <Reveal delay={150}>
               <p
                 className="text-lg mb-8 max-w-xl mx-auto"
@@ -433,7 +465,7 @@ export default function Home() {
                 new work.
               </p>
             </Reveal>
-            <Reveal delay={300}>
+            <Reveal variant="pop" delay={300}>
               <Magnetic>
                 <Link
                   href="/contact"

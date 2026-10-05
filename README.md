@@ -46,6 +46,44 @@ variables (`--bg`, `--card`, `--accent1…4`, `--text`, `--muted`, `--border`)
 for every theme. Components only ever reference those variables, so a page can
 change its entire look without touching component code.
 
+## Scroll motion
+
+All scroll effects run through one shared `requestAnimationFrame` loop
+(`src/lib/scroll.ts`) and write CSS variables/transforms directly, so
+scrolling never re-renders React. Every effect is disabled or frozen under
+`prefers-reduced-motion`.
+
+| Component        | Effect                                                         |
+| ---------------- | -------------------------------------------------------------- |
+| `Reveal`         | On-enter entrances: up, rise, flip, pop, zoom, clip wipes, scan |
+| `SplitText`      | Word/char staggered reveal (mask, blur, flip)                  |
+| `ScrubText`      | Words light up as the paragraph scrolls past (scroll-scrubbed) |
+| `Parallax`       | Depth layers (element- or page-scroll driven)                  |
+| `ScrollExit`     | Hero lifts, fades, scales/blurs as it scrolls away             |
+| `ScrollTrack`    | Oversized type band locked to scroll                           |
+| `StackCards`     | Sticky stacking deck                                           |
+| `ScrollTimeline` | Timeline spine that fills with scroll                          |
+| `Marquee`        | `reactive` prop: speeds up / reverses / skews with velocity    |
+
+Each page uses a mix that matches its theme:
+
+- **Home (neon):** parallax mesh, hero exit, velocity marquee, 3D flip cards, staggered parallax grid, neon scrubbed CTA
+- **Projects (monochrome):** character-mask hero, curtain-wipe cards (replay on filter), scroll-locked outlined type bands
+- **About (earthy):** organic parallax, self-reading story, growing timeline, flip framework grid, springy skill chips
+- **Services (glass):** frosted-focus cards, hero that mists over, sticky process deck, fanned pricing
+- **Contact (matrix):** CRT scan-in channels, form fields that "boot" in sequence, decoding headings
+
+## Next-page portal
+
+Every page ends with `NextPage` (mounted in `Layout`), a big card linking
+to the next page in the nav order (Contact loops back to Home). It renders
+in the **destination's** theme by setting `data-theme` on the card, which
+scopes that theme's CSS variables. It also carries that page's signature
+details: neon orbs and the MB blob, a fanned deck of project logos, the
+portrait in a warm arch, frosted service chips, or live Matrix rain.
+Clicking plays a circular wipe in the next theme (`src/lib/pageTransition.ts`)
+before the route changes. Copy lives in `src/data/nextPage.ts`.
+
 ## Contact form
 
 The form validates client-side and then either:

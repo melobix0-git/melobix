@@ -1,7 +1,3 @@
-/**
- * Content for the about page. Everything on the page is rendered from this
- * file — keep copy here, not in the component.
- */
 
 export const aboutHero = {
   eyebrow: "Founder — Melobix Studio",
@@ -9,11 +5,7 @@ export const aboutHero = {
   lead: "Engineer & multidisciplinary creative-technologist — Petroluem Engineer, UI/UX designer, brand designer, web developer, and product thinker, building digital experiences for All.",
   second:
     "From brand identity to full-stack platforms, I turn ideas into things that actually exist.",
-  /**
-   * Headshot shown in the hero card. The file lives at `public/images/`
-   * (see public/images/README.md); while it's missing, the hero falls back
-   * to the gradient name card.
-   */
+
   portrait: {
     src: "/images/wonders.jpeg",
     alt: "Portrait of Wonders (Obioma Obinna), founder of Melobix Studio, in a navy suit and light-blue shirt against a teal backdrop.",

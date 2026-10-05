@@ -1,8 +1,11 @@
 import { Link } from "wouter";
 import Magnetic from "@/components/Magnetic";
-import Reveal from "@/components/Reveal";
+import Parallax from "@/components/Parallax";
+import Reveal, { type RevealVariant } from "@/components/Reveal";
 import ScrambleText from "@/components/ScrambleText";
+import ScrollExit from "@/components/ScrollExit";
 import SectionHeading from "@/components/SectionHeading";
+import StackCards from "@/components/StackCards";
 import Tilt from "@/components/Tilt";
 import {
   pricingPlans,
@@ -74,6 +77,9 @@ function PlanContent({ plan }: { plan: PricingPlan }) {
   );
 }
 
+/** Pricing fans in from the centre: outer cards swing in, the middle rises. */
+const pricingEntrance: RevealVariant[] = ["tilt-left", "rise", "tilt-right"];
+
 export default function Services() {
   useDocumentTitle("Services");
 
@@ -84,20 +90,37 @@ export default function Services() {
         className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        <div
-          className="absolute -top-40 -left-32 w-[32rem] h-[32rem] rounded-full blur-3xl opacity-60 animate-drift"
-          style={{ background: "var(--accent3)" }}
-        />
-        <div
-          className="absolute top-1/3 -right-40 w-[28rem] h-[28rem] rounded-full blur-3xl opacity-60 animate-drift"
-          style={{ background: "var(--accent4)", animationDelay: "-6s" }}
-        />
+        {/* Light pools drift against each other as you scroll, so the
+            frosted cards always have something moving behind the glass. */}
+        <Parallax
+          mode="page"
+          offset={0.15}
+          x={0.03}
+          className="absolute -top-40 -left-32"
+        >
+          <div
+            className="w-[32rem] h-[32rem] rounded-full blur-3xl opacity-60 animate-drift"
+            style={{ background: "var(--accent3)" }}
+          />
+        </Parallax>
+        <Parallax
+          mode="page"
+          offset={-0.22}
+          x={-0.04}
+          className="absolute top-1/3 -right-40"
+        >
+          <div
+            className="w-[28rem] h-[28rem] rounded-full blur-3xl opacity-60 animate-drift"
+            style={{ background: "var(--accent4)", animationDelay: "-6s" }}
+          />
+        </Parallax>
       </div>
 
       <div className="relative z-10">
         {/* Hero */}
         <section className="min-h-[80vh] flex items-center pt-32 pb-20">
-          <div className="container">
+          {/* Hero frosts over (blurs) as it scrolls away — glass, misting up */}
+          <ScrollExit className="container" lift={-60} scaleTo={0.97} blur={10}>
             <div className="max-w-3xl animate-fadeUp">
               <p
                 className="text-xs tracking-widest uppercase mb-6"
@@ -122,7 +145,7 @@ export default function Services() {
                 starts with a conversation.
               </p>
             </div>
-          </div>
+          </ScrollExit>
         </section>
 
         {/* Services grid */}
@@ -130,9 +153,12 @@ export default function Services() {
           <div className="container">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {services.map((service, idx) => (
+                // "Frosted focus": each pane starts oversized and blurred, then
+                // settles crisp. Diagonal stagger (row + column) sweeps the grid.
                 <Reveal
                   key={service.title}
-                  delay={(idx % 3) * 100}
+                  variant="zoom"
+                  delay={((idx % 3) + Math.floor(idx / 3)) * 110}
                   className="h-full"
                 >
                   <Tilt
@@ -194,37 +220,73 @@ export default function Services() {
           </div>
         </section>
 
-        {/* Process */}
+        {/* Process — sticky stacking deck */}
         <section
           className="py-20 border-t"
           style={{ borderColor: "var(--border)" }}
         >
-          <div className="container">
-            <Reveal>
-              <SectionHeading eyebrow="How I work" title="My Process" />
-            </Reveal>
+          <div className="container grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-12">
+            <div className="lg:sticky lg:top-32 self-start">
+              <SectionHeading
+                eyebrow="How I work"
+                title="My Process"
+                description="Four steps, every time. Scroll through them — each one builds on the one before."
+              />
+            </div>
 
-            <ol className="grid grid-cols-1 md:grid-cols-4 gap-6 list-none">
-              {processSteps.map((item, idx) => (
-                <li key={item.step}>
-                  <Reveal
-                    delay={idx * 130}
-                    variant="scale"
-                    className="text-center"
+            <div role="list" aria-label="Process steps">
+              <StackCards
+                top={128}
+                step={22}
+                items={processSteps.map((item, idx) => (
+                  <div
+                    key={item.step}
+                    role="listitem"
+                    className="relative overflow-hidden rounded-3xl p-8 md:p-10 backdrop-blur-xl"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--card) 88%, var(--bg))",
+                      border: "1px solid var(--border)",
+                      boxShadow:
+                        "0 24px 60px -30px color-mix(in srgb, var(--accent2) 45%, transparent)",
+                    }}
                   >
-                    <div
-                      className="text-5xl font-extrabold mb-4 opacity-30"
-                      style={{ color: "var(--accent1)" }}
-                      aria-hidden="true"
-                    >
-                      {item.step}
+                    <div className="flex items-start justify-between gap-6 mb-8">
+                      <span
+                        className="text-xs font-semibold uppercase tracking-widest"
+                        style={{ color: "var(--accent2)" }}
+                      >
+                        Step {idx + 1} of {processSteps.length}
+                      </span>
+                      <span
+                        className="font-display text-6xl md:text-7xl font-extrabold leading-none"
+                        style={{
+                          color: "var(--accent1)",
+                          opacity: 0.35,
+                        }}
+                        aria-hidden="true"
+                      >
+                        {item.step}
+                      </span>
                     </div>
-                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                    <p style={{ color: "var(--muted)" }}>{item.desc}</p>
-                  </Reveal>
-                </li>
-              ))}
-            </ol>
+                    <h3 className="text-2xl md:text-3xl font-bold mb-3">
+                      {item.title}
+                    </h3>
+                    <p className="text-lg" style={{ color: "var(--muted)" }}>
+                      {item.desc}
+                    </p>
+                    <div
+                      className="absolute -right-16 -bottom-16 w-48 h-48 rounded-full blur-3xl opacity-50 pointer-events-none"
+                      style={{
+                        background:
+                          idx % 2 ? "var(--accent4)" : "var(--accent3)",
+                      }}
+                      aria-hidden="true"
+                    />
+                  </div>
+                ))}
+              />
+            </div>
           </div>
         </section>
 
@@ -234,17 +296,22 @@ export default function Services() {
           style={{ borderColor: "var(--border)" }}
         >
           <div className="container">
-            <Reveal>
-              <SectionHeading
-                eyebrow="Packages"
-                title="Pricing"
-                description="Transparent starting points. Every project is scoped individually, so treat these as a guide rather than a quote."
-              />
-            </Reveal>
+            <SectionHeading
+              eyebrow="Packages"
+              title="Pricing"
+              effect="blur"
+              description="Transparent starting points. Every project is scoped individually, so treat these as a guide rather than a quote."
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
               {pricingPlans.map((plan, idx) => (
-                <Reveal key={plan.name} delay={idx * 120} className="h-full">
+                <Reveal
+                  key={plan.name}
+                  variant={pricingEntrance[idx % pricingEntrance.length]}
+                  delay={idx === 1 ? 0 : 180}
+                  duration={1100}
+                  className="h-full"
+                >
                   <div
                     className={`h-full rounded-2xl transition-transform ${
                       plan.featured

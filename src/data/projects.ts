@@ -55,6 +55,7 @@ export const projects: Project[] = [
     title: "Petro Prep",
     category: "Web",
     tagline: "Duolingo-style prep for petroleum engineering interviews.",
+    logo: "/logos/Petro-Prep.png",
     description:
       "A gamified quiz app that turns interview prep into daily streaks — the study companion I wish I'd had coming out of petroleum engineering.",
     status: "Shipped",
@@ -69,5 +70,15 @@ export const projects: Project[] = [
       "A monetized web app for crafting and sending romantic messages. Small, fun, and proof that small products can still make money.",
     status: "Shipped",
     stack: ["Web app", "Monetized"],
+  },
+  {
+    title: "Amore Essence",
+    category: "Web",
+    tagline: "With love in every drop.",
+    logo: "/logos/amore-essence.jpg",
+    description:
+      "A luxury e-commerce web app offering signature perfume oils, fragrances, mini scents, and curated gift collections designed around personal moods and scent rituals.",
+    status: "Shipped",
+    stack: ["Web app", "E-commerce", "Monetized"],
   },
 ];
