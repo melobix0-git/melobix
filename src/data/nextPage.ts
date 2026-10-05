@@ -20,25 +20,25 @@ export const nextPages: Record<string, NextPageInfo> = {
   "/": {
     label: "Home",
     theme: "dark-neon",
-    vibe: "Dark neon",
+    vibe: "Welcome · Let's build",
     kicker: "Back to the start",
     teaser:
       "Where design meets code — the full picture of what I build, in neon.",
     cta: "Back to Home",
   },
   "/projects": {
-    label: "Projects",
+    label: "Jobs",
     theme: "monochrome",
-    vibe: "Monochrome · Editorial",
+    vibe: "I dey deliver · No worry",
     kicker: "See the work",
     teaser:
-      "Real products in the wild — from Aba's markets to a global engagement board.",
+      "Real products in the wild — from Aba markets to a global engagement board.",
     cta: "View Projects",
   },
   "/about": {
     label: "About",
     theme: "earthy",
-    vibe: "Warm · Earthy",
+    vibe: "Engineer · Creative",
     kicker: "Meet the maker",
     teaser:
       "The engineer-turned-creative behind the work, and the framework he thinks with.",
@@ -47,7 +47,7 @@ export const nextPages: Record<string, NextPageInfo> = {
   "/services": {
     label: "Services",
     theme: "glass",
-    vibe: "Glass · Frosted",
+    vibe: "Branding · Everything A-Z",
     kicker: "Work with me",
     teaser:
       "Six ways I turn ideas into things that actually exist — with clear pricing.",
@@ -56,7 +56,7 @@ export const nextPages: Record<string, NextPageInfo> = {
   "/contact": {
     label: "Contact",
     theme: "matrix",
-    vibe: "Matrix · Terminal",
+    vibe: "Let's Get Started",
     kicker: "Open a channel",
     teaser:
       "Got an idea — or a half-baked one? Let's run it through CTRIQUEST™.",
